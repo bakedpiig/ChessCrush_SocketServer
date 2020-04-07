@@ -36,6 +36,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InputMemoryStream.cs" />
+    <Compile Include="OutputMemoryStream.cs" />
     <Compile Include="ServerMain.cs" />
   </ItemGroup>
   <ItemGroup>
