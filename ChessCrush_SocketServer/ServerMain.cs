@@ -13,9 +13,13 @@ namespace ChessCrush_SocketServer
         private static readonly int ListenSocketBackLog = 32;
         private static readonly int Port = 48000;
         private static List<Socket> socketList = new List<Socket>();
+        public static Dictionary<string, Socket> socketsByUserName = new Dictionary<string, Socket>();
+
+        private static Game game;
 
         public static void Main(string[] args)
         {
+            game = new Game();
             listenSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             listenSocket.Bind(new IPEndPoint(GetHostIP(), Port));
             socketList.Add(listenSocket);
@@ -47,7 +51,7 @@ namespace ChessCrush_SocketServer
                             InputMemoryStream inputMemoryStream = new InputMemoryStream(buffer);
                             Task.Run(() =>
                             {
-                                StreamRead(inputMemoryStream);
+                                StreamRead(clientSocket, inputMemoryStream);
                             });
                         }
                     }
@@ -67,9 +71,20 @@ namespace ChessCrush_SocketServer
             listenSocket.Close();
         }
 
-        private static void StreamRead(InputMemoryStream stream)
+        private static void StreamRead(Socket fromSocket, InputMemoryStream stream)
         {
+            stream.Read(out bool participate);
 
+            if(participate)
+            {
+                stream.Read(out string userName);
+                game.ParticipateGame(userName);
+                socketsByUserName.Add(userName, fromSocket);
+            }
+            else
+            {
+
+            }
         }
 
         private static IPAddress GetHostIP()
