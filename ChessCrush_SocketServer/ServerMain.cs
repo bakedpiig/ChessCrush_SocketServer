@@ -32,6 +32,7 @@ namespace ChessCrush_SocketServer
 
                 try
                 {
+
                     Socket.Select(listeningSocket, null, null, 1000);
                     foreach(var sock in listeningSocket)
                     {
@@ -46,7 +47,7 @@ namespace ChessCrush_SocketServer
                         else
                         {
                             var clientSocket = sock as Socket;
-                            byte[] buffer = new byte[256];
+                            byte[] buffer = new byte[1024];
                             clientSocket.Receive(buffer);
                             InputMemoryStream inputMemoryStream = new InputMemoryStream(buffer);
                             Task.Run(() =>
@@ -55,8 +56,8 @@ namespace ChessCrush_SocketServer
                             });
                         }
                     }
-                    
-                    foreach(var sock in socketList)
+
+                    foreach (var sock in socketList)
                     {
                         if (!(sock == listenSocket || sock.Connected))
                             socketList.Remove(sock);
@@ -78,8 +79,8 @@ namespace ChessCrush_SocketServer
             if(participate)
             {
                 stream.Read(out string userName);
-                game.ParticipateGame(userName);
                 socketsByUserName.Add(userName, fromSocket);
+                game.ParticipateGame(userName);
             }
             else
             {

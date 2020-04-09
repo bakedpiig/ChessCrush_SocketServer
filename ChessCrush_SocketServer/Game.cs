@@ -19,8 +19,8 @@ namespace ChessCrush_SocketServer
         public void ParticipateGame(string userName)
         {
             waitingUserNameList.Add(userName);
-            
-            if(waitingUserNameList.Count>=2)
+
+            if (waitingUserNameList.Count >= 2)
             {
                 var newGameRoom = new GameRoom(waitingUserNameList[0], waitingUserNameList[1]);
             }
