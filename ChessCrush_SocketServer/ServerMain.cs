@@ -87,17 +87,26 @@ namespace ChessCrush_SocketServer
 
         private static void StreamRead(Socket fromSocket, InputMemoryStream stream)
         {
-            stream.Read(out bool participate);
+            stream.Read(out int operationCode);
 
-            if(participate)
+            switch ((OperationCode)operationCode)
             {
-                stream.Read(out string userName);
-                socketsByUserName.Add(userName, fromSocket);
-                game.ParticipateGame(userName);
-            }
-            else
-            {
-
+                case OperationCode.SignUp:
+                    stream.Read(out string newUserName);
+                    stream.Read(out string newUserPassword);
+                    break;
+                case OperationCode.SignIn:
+                    stream.Read(out string signUserName);
+                    stream.Read(out string signUserPassword);
+                    break;
+                case OperationCode.Participate:
+                    stream.Read(out string userName);
+                    socketsByUserName.Add(userName, fromSocket);
+                    game.ParticipateGame(userName);
+                    break;
+                case OperationCode.SendAction:
+                default:
+                    return;
             }
         }
 
