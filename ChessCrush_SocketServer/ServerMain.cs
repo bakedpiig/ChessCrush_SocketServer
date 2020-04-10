@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
+using System.Net.Json;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ChessCrush_SocketServer
 {
@@ -11,15 +14,25 @@ namespace ChessCrush_SocketServer
     {
         private static Socket listenSocket;
         private static readonly int ListenSocketBackLog = 32;
-        private static readonly int Port = 48000;
+        private static int Port;
         private static List<Socket> socketList = new List<Socket>();
         public static Dictionary<string, Socket> socketsByUserName = new Dictionary<string, Socket>();
 
+        private static DBConnection dbConnection;
         private static Game game;
 
         public static void Main(string[] args)
         {
+            JsonTextParser parser = new JsonTextParser();
+            JsonObject jsonObj = parser.Parse(File.ReadAllText("../../Data/NetworkSettings.json"));
+            JsonObjectCollection col = jsonObj as JsonObjectCollection;
+
+            Port = Convert.ToInt32(col["ServerPort"].GetValue());
+            dbConnection = new DBConnection(Convert.ToInt32(col["DBPort"].GetValue()), Convert.ToString(col["uid"].GetValue()), Convert.ToString(col["password"].GetValue()),
+                Convert.ToString(col["databaseName"].GetValue()));
+
             game = new Game();
+
             listenSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             listenSocket.Bind(new IPEndPoint(GetHostIP(), Port));
             socketList.Add(listenSocket);

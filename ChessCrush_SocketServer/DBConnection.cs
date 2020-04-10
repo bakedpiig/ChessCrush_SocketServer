@@ -10,9 +10,14 @@ namespace ChessCrush_SocketServer
         private string databaseName;
         public MySqlConnection sqlConnection { get; private set; }
 
-        public DBConnection()
+        public DBConnection(int dbPort, string uid, string password, string databaseName)
         {
-            string conStr = $"server={"127.0.0.1"};port={dbPort.ToString()};uid={uid};pwd={password};database={databaseName};charset=utf8 ;";
+            this.dbPort = dbPort;
+            this.uid = uid;
+            this.password = password;
+            this.databaseName = databaseName;
+
+            string conStr = $"server={"127.0.0.1"};port={this.dbPort.ToString()};uid={this.uid};pwd={this.password};database={this.databaseName};charset=utf8 ;";
             sqlConnection = new MySqlConnection(conStr);
         }
     }
