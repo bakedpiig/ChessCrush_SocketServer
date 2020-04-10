@@ -20,5 +20,19 @@ namespace ChessCrush_SocketServer
             string conStr = $"server={"127.0.0.1"};port={this.dbPort.ToString()};uid={this.uid};pwd={this.password};database={this.databaseName};charset=utf8 ;";
             sqlConnection = new MySqlConnection(conStr);
         }
+
+        public bool TrySignUp(string newUserName, string newUserPassword)
+        {
+            string query = $"select * from users where user_id = \"{newUserName}\";";
+            MySqlCommand comm = new MySqlCommand(query, sqlConnection);
+            var reader = comm.ExecuteReader();
+            if (!(reader is null)) return false;
+
+            string insertQuery = $"insert into users values (\"{newUserName}\",\"{newUserPassword}\");";
+            comm = new MySqlCommand(insertQuery, sqlConnection);
+            comm.ExecuteNonQuery();
+
+            return true;
+        }
     }
 }
