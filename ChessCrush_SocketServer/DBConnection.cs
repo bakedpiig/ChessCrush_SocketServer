@@ -34,5 +34,15 @@ namespace ChessCrush_SocketServer
 
             return true;
         }
+
+        public bool TrySignIn(string signUserName, string signUserPassword)
+        {
+            string signInQuery = $"select * from users where user_id = \"{signUserName}\" and password = \"{signUserPassword}\";";
+            MySqlCommand comm = new MySqlCommand(signInQuery, sqlConnection);
+            var reader = comm.ExecuteReader();
+            if (reader is null) return false;
+
+            return true;
+        }
     }
 }

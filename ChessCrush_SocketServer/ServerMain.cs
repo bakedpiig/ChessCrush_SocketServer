@@ -107,7 +107,14 @@ namespace ChessCrush_SocketServer
                 case OperationCode.SignIn:
                     stream.Read(out string signUserName);
                     stream.Read(out string signUserPassword);
+
+                    oms = new OutputMemoryStream();
+                    if (dbConnection.TrySignIn(signUserName, signUserPassword))
+                        oms.Write(true);
+                    else
+                        oms.Write(false);
                     break;
+
                 case OperationCode.Participate:
                     stream.Read(out string userName);
                     game.ParticipateGame(userName);
