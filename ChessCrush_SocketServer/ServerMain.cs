@@ -106,10 +106,12 @@ namespace ChessCrush_SocketServer
                     stream.Read(out string signUserPassword);
 
                     oms = new OutputMemoryStream();
-                    if (dbConnection.TrySignIn(signUserName, signUserPassword))
-                        oms.Write(true);
-                    else
-                        oms.Write(false);
+                    var result = dbConnection.SignIn(signUserName, signUserPassword);
+                    oms.Write((int)result);
+
+                    if (result == OperationResultCode.SignInCode.Success)
+                        socketsByUserName.Add(signUserName, fromSocket);
+
                     break;
 
                 case OperationCode.Participate:
