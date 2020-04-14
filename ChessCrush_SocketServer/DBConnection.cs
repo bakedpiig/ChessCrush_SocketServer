@@ -36,14 +36,16 @@ namespace ChessCrush_SocketServer
             return SignUpCode.Success;
         }
 
-        public bool TrySignIn(string signUserName, string signUserPassword)
+        public SignInCode SignIn(string signUserName, string signUserPassword)
         {
-            string signInQuery = $"select * from users where user_id = \"{signUserName}\" and password = \"{signUserPassword}\";";
+            string signInQuery = $"select * from users where user_id = \"{signUserName}\";";
             MySqlCommand comm = new MySqlCommand(signInQuery, sqlConnection);
             var reader = comm.ExecuteReader();
-            if (reader is null) return false;
 
-            return true;
+            if (!reader.Read()) return SignInCode.MissingID;
+            if ((string)reader["password"] != signUserPassword) return SignInCode.WrongPW;
+
+            return SignInCode.Success;
         }
     }
 }
