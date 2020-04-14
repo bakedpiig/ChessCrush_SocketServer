@@ -96,10 +96,7 @@ namespace ChessCrush_SocketServer
                     stream.Read(out string newUserPassword);
 
                     OutputMemoryStream oms = new OutputMemoryStream();
-                    if (dbConnection.TrySignUp(newUserName, newUserPassword))
-                        oms.Write(true);
-                    else
-                        oms.Write(false);
+                    oms.Write((int)dbConnection.SignUp(newUserName, newUserPassword));
 
                     fromSocket.Send(oms.buffer);
                     break;

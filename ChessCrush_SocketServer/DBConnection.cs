@@ -1,4 +1,5 @@
-﻿using MySql.Data.MySqlClient;
+﻿using ChessCrush_SocketServer.OperationResultCode;
+using MySql.Data.MySqlClient;
 
 namespace ChessCrush_SocketServer
 {
@@ -21,18 +22,18 @@ namespace ChessCrush_SocketServer
             sqlConnection = new MySqlConnection(conStr);
         }
 
-        public bool TrySignUp(string newUserName, string newUserPassword)
+        public SignUpCode SignUp(string newUserName, string newUserPassword)
         {
             string query = $"select * from users where user_id = \"{newUserName}\";";
             MySqlCommand comm = new MySqlCommand(query, sqlConnection);
             var reader = comm.ExecuteReader();
-            if (!(reader is null)) return false;
+            if (!(reader is null)) return SignUpCode.UsingID;
 
             string insertQuery = $"insert into users values (\"{newUserName}\",\"{newUserPassword}\");";
             comm = new MySqlCommand(insertQuery, sqlConnection);
             comm.ExecuteNonQuery();
 
-            return true;
+            return SignUpCode.Success;
         }
 
         public bool TrySignIn(string signUserName, string signUserPassword)
