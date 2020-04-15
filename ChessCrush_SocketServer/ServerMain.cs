@@ -112,6 +112,7 @@ namespace ChessCrush_SocketServer
                     if (result == OperationResultCode.SignInCode.Success)
                         socketsByUserName.Add(signUserName, fromSocket);
 
+                    fromSocket.Send(oms.buffer);
                     break;
 
                 case OperationCode.Participate:

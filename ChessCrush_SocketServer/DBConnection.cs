@@ -20,6 +20,7 @@ namespace ChessCrush_SocketServer
 
             string conStr = $"server={"127.0.0.1"};port={this.dbPort.ToString()};uid={this.uid};pwd={this.password};database={this.databaseName};charset=utf8 ;";
             sqlConnection = new MySqlConnection(conStr);
+            sqlConnection.Open();
         }
 
         public SignUpCode SignUp(string newUserName, string newUserPassword)
@@ -27,11 +28,14 @@ namespace ChessCrush_SocketServer
             string query = $"select * from users where user_id = \"{newUserName}\";";
             MySqlCommand comm = new MySqlCommand(query, sqlConnection);
             var reader = comm.ExecuteReader();
-            if (!(reader is null)) return SignUpCode.UsingID;
+            var result = reader.Read();
+            reader.Close();
+            if (result) return SignUpCode.UsingID;
 
             string insertQuery = $"insert into users values (\"{newUserName}\",\"{newUserPassword}\");";
-            comm = new MySqlCommand(insertQuery, sqlConnection);
-            comm.ExecuteNonQuery();
+            var newComm = new MySqlCommand(insertQuery, sqlConnection);
+            newComm.ExecuteNonQuery();
+
 
             return SignUpCode.Success;
         }
@@ -41,8 +45,10 @@ namespace ChessCrush_SocketServer
             string signInQuery = $"select * from users where user_id = \"{signUserName}\";";
             MySqlCommand comm = new MySqlCommand(signInQuery, sqlConnection);
             var reader = comm.ExecuteReader();
+            var result = reader.Read();
+            reader.Close();
 
-            if (!reader.Read()) return SignInCode.MissingID;
+            if (!result) return SignInCode.MissingID;
             if ((string)reader["password"] != signUserPassword) return SignInCode.WrongPW;
 
             return SignInCode.Success;
