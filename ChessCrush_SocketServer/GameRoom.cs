@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ChessCrush_SocketServer
 {
@@ -16,14 +17,19 @@ namespace ChessCrush_SocketServer
             players.Add(player1);
             players.Add(player2);
 
+            Random random = new Random();
+            bool isPlayer1White = random.Next(0, 1) % 2 == 0;
+
             OutputMemoryStream outputMemoryStream1 = new OutputMemoryStream();
             outputMemoryStream1.Write(roomID);
             outputMemoryStream1.Write(player2);
+            outputMemoryStream1.Write(isPlayer1White);
             ServerMain.socketsByUserName[player1].Send(outputMemoryStream1.buffer);
 
             OutputMemoryStream outputMemoryStream2 = new OutputMemoryStream();
             outputMemoryStream2.Write(roomID);
             outputMemoryStream2.Write(player1);
+            outputMemoryStream2.Write(!isPlayer1White);
             ServerMain.socketsByUserName[player2].Send(outputMemoryStream2.buffer);
         }
     }
