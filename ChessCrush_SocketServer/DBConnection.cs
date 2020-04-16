@@ -46,11 +46,19 @@ namespace ChessCrush_SocketServer
             MySqlCommand comm = new MySqlCommand(signInQuery, sqlConnection);
             var reader = comm.ExecuteReader();
             var result = reader.Read();
+
+            if (!result)
+            {
+                reader.Close();
+                return SignInCode.MissingID;
+            }
+            if (reader.GetString("password") != signUserPassword)
+            {
+                reader.Close();
+                return SignInCode.WrongPW;
+            }
+
             reader.Close();
-
-            if (!result) return SignInCode.MissingID;
-            if ((string)reader["password"] != signUserPassword) return SignInCode.WrongPW;
-
             return SignInCode.Success;
         }
     }
