@@ -20,10 +20,22 @@ namespace ChessCrush_SocketServer
         {
             waitingUserNameList.Add(userName);
 
-            if (waitingUserNameList.Count >= 2)
+            var beforeTime = DateTime.Now;
+            while (DateTime.Now - beforeTime <= new TimeSpan(0, 0, 10)) 
             {
-                var newGameRoom = new GameRoom(waitingUserNameList[0], waitingUserNameList[1]);
+                if (waitingUserNameList.Count >= 2)
+                {
+                    var newGameRoom = new GameRoom(waitingUserNameList[0], waitingUserNameList[1]);
+                    waitingUserNameList.RemoveAt(0);
+                    waitingUserNameList.RemoveAt(1);
+                    return;
+                }
+                Task.Delay(1000);
             }
+
+            var oms = new OutputMemoryStream();
+            oms.Write(false);
+            ServerMain.socketsByUserName[userName].Send(oms.buffer);
         }
     }
 }
