@@ -73,7 +73,16 @@ namespace ChessCrush_SocketServer
                     foreach (var sock in socketList)
                     {
                         if (!(sock == listenSocket || sock.Connected))
+                        {
                             socketList.Remove(sock);
+
+                            var list = new List<Socket>();
+                            list.AddRange(socketsByUserName.Values);
+                            int idx = list.FindIndex(_ => _ == sock);
+                            var strList = new List<string>();
+                            strList.AddRange(socketsByUserName.Keys);
+                            socketsByUserName.Remove(strList[idx]);
+                        }
                     }
                 }
                 catch(Exception e)
