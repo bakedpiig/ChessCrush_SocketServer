@@ -32,7 +32,7 @@ namespace ChessCrush_SocketServer
             reader.Close();
             if (result) return SignUpCode.UsingID;
 
-            string insertQuery = $"insert into users values (\"{newUserName}\",\"{newUserPassword}\");";
+            string insertQuery = $"insert into users values (\"{newUserName}\", \"{newUserPassword}\", false, 0);";
             var newComm = new MySqlCommand(insertQuery, sqlConnection);
             newComm.ExecuteNonQuery();
 
